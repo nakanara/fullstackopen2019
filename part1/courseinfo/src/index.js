@@ -1,58 +1,85 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-const Header = (props) => {
+const Hello = ({name, sex, age, count}) => {
+  //const {name, sex, age} = props;
 
-  return (
-    <>
-      <h1>{props.course}</h1>
-    </>
-  )
-}
+  const bornYear = () => new Date().getFullYear() - age;
 
-const Part = (props) => {
   return (
     <div>
       <p>
-        {props.part} {props.exercises}
+        Hello {name}, you are {age} years old {sex} / count {count}
       </p>
+      <p>So you were probably born in {bornYear()}</p>
     </div>
   )
 }
-const Content = (props) => {
-  return (
-    <>
-      <Part part={props.part1} exercises={props.exercises1} />
-      <Part part={props.part2} exercises={props.exercises2} />
-      <Part part={props.part3} exercises={props.exercises3} />
-      
-    </>
-  )
-}
 
-const Total = (props) => {
+const Display = ({count}) => <div><h1>{count}</h1></div>
+
+const Button = (props) => {
+
+  let {onClick, text} = props;
+//  console.log('props is', props);
   return (
-    <>
-    <p>Number of exercises {props.total}</p>
-    </>
+    <button onClick={onClick}>
+    {text}
+  </button>
   )
 }
-const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return (
+      <div>
+        the app is used by pressing the buttons
+      </div>
+    )
+  }
 
   return (
     <div>
-      <Header course={course} />
-      <Content part1={part1} exercises1={exercises1} part2={part2} exercises2={exercises2} part3={part3} exercises3={exercises3} />
-      <Total total={exercises1+exercises2+exercises3} />
+      button press history: {props.allClicks.join(' ')}
     </div>
   )
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+const App = (props) => {
+  const name = 'Peter'
+  const age = 10
+  const [count, setCount] = useState(0);
+  const [history, setHistory] = useState([]);
+
+  //setTimeout(()=> setCount(count+1), 1000);
+
+  const fnAddClick = () => {
+    setCount(count+1);
+    setHistory( history.concat('A'));
+  }
+  const fnMinusClick = () => {
+    setCount(count-1);
+    setHistory( history.concat('D'));
+  }
+  const fnZeroClick = () => {
+    setCount(0);
+    setHistory( history.concat('Z'));
+  }
+  
+
+  return (
+    <div>
+      <h1>Greetings</h1>
+      <Display count={count} />
+      <Button onClick={fnAddClick} text="plus"/>
+      <Button onClick={fnMinusClick} text="minus"/>
+      <Button onClick={fnZeroClick} text="to zero"/>
+      <History allClicks={history} />
+      <Hello name="Maya" age={26 + 10} sex="M" count={count}/>
+      <Hello name={name + 'A'} age={age+10} sex="M" count={count}/>
+      <Hello name={name} age={age} sex="F" count={count}/>
+    </div>
+  )
+}
+
+  
+ReactDOM.render(<App/>, document.getElementById('root'));
