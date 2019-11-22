@@ -1,85 +1,58 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-const Hello = ({name, sex, age, count}) => {
-  //const {name, sex, age} = props;
-
-  const bornYear = () => new Date().getFullYear() - age;
-
+const Button = ({onClick, text}) => {
   return (
+    <>
+      <button onClick={onClick}>{text}</button>
+    </>
+  )
+}
+
+const Statistic = ({text, value}) => {
+  return (
+    <>
+    <label>{text} {value}</label><br/>
+    </>
+  )
+}
+
+const Statistics = (props) => {
+  return(
     <div>
-      <p>
-        Hello {name}, you are {age} years old {sex} / count {count}
-      </p>
-      <p>So you were probably born in {bornYear()}</p>
+      <Statistic text="good" value ={props.good} />
+      <Statistic text="neutral" value ={props.neutral} />
+      <Statistic text="bad" value ={props.bad} />
     </div>
   )
 }
 
-const Display = ({count}) => <div><h1>{count}</h1></div>
+const App = () => {
+  // save clicks of each button to own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
 
-const Button = (props) => {
-
-  let {onClick, text} = props;
-//  console.log('props is', props);
-  return (
-    <button onClick={onClick}>
-    {text}
-  </button>
-  )
-}
-const History = (props) => {
-  if (props.allClicks.length === 0) {
-    return (
-      <div>
-        the app is used by pressing the buttons
-      </div>
-    )
-  }
 
   return (
     <div>
-      button press history: {props.allClicks.join(' ')}
+      <h1>give feedback</h1>
+      <Button onClick={()=>setGood(good +1)} text="good" />
+      <Button onClick={()=>setNeutral(neutral +1)} text="neutral" />
+      <Button onClick={()=>setBad(bad +1)} text="bad" />
+      <h1>statistics </h1>
+
+      <Statistics good={good} neutral={neutral} bad={bad}/>
+      <Statistic value={good} text="good"/>
+      <Statistic value={neutral} text="neutral"/>
+      <Statistic value={bad} text="bad"/>
+      <Statistic value={(good+neutral+bad)} text="all"/>
+      <Statistic value={(good+(bad*-1)) /(good+neutral+bad)} text="average"/>
+      <Statistic value={(((good)/(good+neutral+bad))*100) + "%"} text="positive"/>
     </div>
   )
 }
 
-const App = (props) => {
-  const name = 'Peter'
-  const age = 10
-  const [count, setCount] = useState(0);
-  const [history, setHistory] = useState([]);
-
-  //setTimeout(()=> setCount(count+1), 1000);
-
-  const fnAddClick = () => {
-    setCount(count+1);
-    setHistory( history.concat('A'));
-  }
-  const fnMinusClick = () => {
-    setCount(count-1);
-    setHistory( history.concat('D'));
-  }
-  const fnZeroClick = () => {
-    setCount(0);
-    setHistory( history.concat('Z'));
-  }
-  
-
-  return (
-    <div>
-      <h1>Greetings</h1>
-      <Display count={count} />
-      <Button onClick={fnAddClick} text="plus"/>
-      <Button onClick={fnMinusClick} text="minus"/>
-      <Button onClick={fnZeroClick} text="to zero"/>
-      <History allClicks={history} />
-      <Hello name="Maya" age={26 + 10} sex="M" count={count}/>
-      <Hello name={name + 'A'} age={age+10} sex="M" count={count}/>
-      <Hello name={name} age={age} sex="F" count={count}/>
-    </div>
-  )
-}
-
-  
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<App />, 
+  document.getElementById('root')
+)
